@@ -81,18 +81,18 @@ public class AnalisadorLexico {
         return null;
     }
 
-    private Token operadorAritmetico(){
+    private Token operadorAritmetico() {
         int caractereRecebido = leitorDeArquivos.lerProximoCaractere();
         char c = (char) caractereRecebido;
         switch (c) {
             case '*':
-                return new Token(TipoToken.OpAritMult, "*");
+                return new Token("*", "*");
             case '/':
-                return new Token(TipoToken.OpAritDiv, "/");
+                return new Token("/", "/");
             case '+':
-                return new Token(TipoToken.OpAritSoma, "+");
+                return new Token("+", "+");
             case '-':
-                return new Token(TipoToken.OpAritSub, "-");
+                return new Token("-", "-");
         }
 
         return null;
@@ -104,23 +104,23 @@ public class AnalisadorLexico {
         if(c == '<') {
             c = (char)leitorDeArquivos.lerProximoCaractere();
             if(c == '>')
-                return new Token(TipoToken.OpRelDif,"<>");
+                return new Token("<>","<>");
             else if(c == '=')
-                return new Token(TipoToken.OpRelMenorIgual,"<=");
+                return new Token("<=","<=");
             else{
                 leitorDeArquivos.retroceder();
-                return new Token(TipoToken.OpRelMenor,"<");
+                return new Token("<","<");
             }
         }
         else if(c == '>') {
             c = (char)leitorDeArquivos.lerProximoCaractere();
             if(c == '=')
-                return new Token(TipoToken.OpRelMaiorIgual,">=");
+                return new Token(">=",">=");
             else
-                return new Token(TipoToken.OpRelMaior,">");
+                return new Token(">",">");
         }
         else if(c == '='){
-            return new Token(TipoToken.OpRelIgual, "=");
+            return new Token("=", "=");
         }
 
         return null;
@@ -129,9 +129,10 @@ public class AnalisadorLexico {
     private Token delimitador() {
         int caractereLido = leitorDeArquivos.lerProximoCaractere();
         char c = (char) caractereLido;
-        if (c == ':') {
-            return new Token(TipoToken.Delim, leitorDeArquivos.getLexema());
-        } else {
+        if (c == ':' || c == ',') {
+            return new Token(leitorDeArquivos.getLexema(), leitorDeArquivos.getLexema());
+        }
+        else {
             return null;
         }
     }
@@ -141,9 +142,9 @@ public class AnalisadorLexico {
         char c = (char) caractereRecebido;
 
         if(c == '(')
-            return new Token(TipoToken.AbrePar,"(");
+            return new Token("(","(");
         else if(c == ')')
-            return new Token(TipoToken.FechaPar,")");
+            return new Token(")",")");
 
         return null;
     }
@@ -170,13 +171,13 @@ public class AnalisadorLexico {
                         }
                     } else if (!Character.isDigit(c)) {
                         leitorDeArquivos.retroceder();
-                        return new Token(TipoToken.NumInt, leitorDeArquivos.getLexema());
+                        return new Token(leitorDeArquivos.getLexema(), TipoToken.NUM_INT.toString());
                     }
                     break;
                 case 3: // retorna o token quando encontrar algo diferente de um numero
                     if (!Character.isDigit(c)) {
                         leitorDeArquivos.retroceder();
-                        return new Token(TipoToken.NumReal, leitorDeArquivos.getLexema());
+                        return new Token(leitorDeArquivos.getLexema(), TipoToken.NUM_REAL.toString());
                     }
                     break;
             }
@@ -197,7 +198,7 @@ public class AnalisadorLexico {
                 case 2:
                     if (!Character.isLetterOrDigit(c)) {
                         leitorDeArquivos.retroceder();
-                        return new Token(TipoToken.Var, leitorDeArquivos.getLexema());
+                        return new Token(leitorDeArquivos.getLexema(), TipoToken.IDENT.toString());
                     }
                     break;
 
@@ -211,24 +212,22 @@ public class AnalisadorLexico {
         while (true) {
             char c = (char) leitorDeArquivos.lerProximoCaractere();
             if (estado == 1) {
-                if (c == '\'') {
+                if (c == '\"') {
                     estado = 2;
                 } else {
                     return null;
                 }
             } else if (estado == 2) {
                 if (c == '\n') {
-                    leitorDeArquivos.incrementarLinha();
                     return null;
                 }
-                if (c == '\'') {
-                    return new Token(TipoToken.Cadeia, leitorDeArquivos.getLexema());
+                if (c == '\"') {
+                    return new Token(leitorDeArquivos.getLexema(), TipoToken.CADEIA.toString());
                 } else if (c == '\\') {
                     estado = 3;
                 }
             } else if (estado == 3) {
                 if (c == '\n') {
-                    leitorDeArquivos.incrementarLinha();
                     return null;
                 } else {
                     estado = 2;
@@ -240,70 +239,83 @@ public class AnalisadorLexico {
         int estado = 1;
         while (true) {
             char c = (char) leitorDeArquivos.lerProximoCaractere();
-            if (estado == 1) {
-                if (Character.isWhitespace(c) || c == ' ') {
-                    estado = 2;
-                } else if (c == '%') {
-                    estado = 3;
-                } else {
-                    if(c == '\n')
+            switch (estado) {
+                case 1:
+                    if (Character.isWhitespace(c) || c == ' ') {
+                        if(c == '\n'){
+                            leitorDeArquivos.incrementarLinha();
+                        }
+                        estado = 2;
+                    } else if (c == '{') {
+                        estado = 3;
+                    } else {
+                        leitorDeArquivos.retroceder();
+                        return;
+                    }
+                    break;
+                case 2:
+                    if (c == '{') {
+                        estado = 3;
+                    }
+                    else if(c == '\n'){
                         leitorDeArquivos.incrementarLinha();
-
-                    leitorDeArquivos.retroceder();
-                    return;
-                }
-            } else if (estado == 2) {
-                if (c == '%') {
-                    estado = 3;
-                } else if (!(Character.isWhitespace(c) || c == ' ')) {
-                    leitorDeArquivos.retroceder();
-                    return;
-                }
-            } else if (estado == 3) {
-                if (c == '\n') {
-                    leitorDeArquivos.incrementarLinha();
-                    return;
-                }
+                    }
+                    else if (!(Character.isWhitespace(c) || c == ' ')) {
+                        leitorDeArquivos.retroceder();
+                        return;
+                    }
+                    break;
+                case 3:
+                    if(c == '}') {
+                        break;
+                    }
+                    else if (c == '\n') {
+                        estado = 2;
+                        leitorDeArquivos.incrementarLinha();
+                    }
+                    break;
             }
         }
     }
     private Token palavrasChave() {
         while (true) {
             char c = (char) leitorDeArquivos.lerProximoCaractere();
-            if (!Character.isLetter(c)) {
+            if (!Character.isLetter(c) && c != '_') {
                 leitorDeArquivos.retroceder();
                 String lexema = leitorDeArquivos.getLexema();
                 switch (lexema) {
-                    case "DECLARACOES":
-                        return new Token(TipoToken.PCDeclaracoes, lexema);
-                    case "ALGORITMO":
-                        return new Token(TipoToken.PCAlgoritmo, lexema);
-                    case "INT":
-                        return new Token(TipoToken.PCInteiro, lexema);
+                    case "declare":
+                        return new Token(lexema, lexema);
+                    case "algoritmo":
+                        return new Token(lexema, lexema);
+                    case "inteiro":
+                        return new Token(lexema, lexema);
+                    case "literal":
+                        return new Token(lexema, lexema);
                     case "REAL":
-                        return new Token(TipoToken.PCReal, lexema);
+                        return new Token(lexema, lexema);
                     case "ATRIBUIR":
-                        return new Token(TipoToken.PCAtribuir, lexema);
+                        return new Token(lexema, lexema);
                     case "A":
-                        return new Token(TipoToken.PCA, lexema);
-                    case "LER":
-                        return new Token(TipoToken.PCLer, lexema);
-                    case "IMPRIMIR":
-                        return new Token(TipoToken.PCImprimir, lexema);
+                        return new Token(lexema, lexema);
+                    case "leia":
+                        return new Token(lexema, lexema);
+                    case "escreva":
+                        return new Token(lexema, lexema);
                     case "SE":
-                        return new Token(TipoToken.PCSe, lexema);
+                        return new Token(lexema, lexema);
                     case "ENTAO":
-                        return new Token(TipoToken.PCEntao, lexema);
+                        return new Token(lexema, lexema);
                     case "ENQUANTO":
-                        return new Token(TipoToken.PCEnquanto, lexema);
+                        return new Token(lexema, lexema);
                     case "INICIO":
-                        return new Token(TipoToken.PCInicio, lexema);
-                    case "FIM":
-                        return new Token(TipoToken.PCFim, lexema);
+                        return new Token(lexema, lexema);
+                    case "fim_algoritmo":
+                        return new Token(lexema, lexema);
                     case "E":
-                        return new Token(TipoToken.OpBoolE, lexema);
+                        return new Token(lexema, lexema);
                     case "OU":
-                        return new Token(TipoToken.OpBoolOu, lexema);
+                        return new Token(lexema, lexema);
                     default:
                         return null;
                 }
@@ -314,8 +326,7 @@ public class AnalisadorLexico {
     private Token fim() {
         int caractereLido = leitorDeArquivos.lerProximoCaractere();
         if (caractereLido == -1) {
-            leitorDeArquivos.incrementarLinha();
-            return new Token(TipoToken.Fim, "Fim");
+            return new Token("fim_algoritmo", "fim_algoritmo");
         }
         return null;
     }

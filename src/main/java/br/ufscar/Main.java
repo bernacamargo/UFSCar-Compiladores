@@ -8,7 +8,7 @@ public class Main {
         while(true){
             t = lex.proximoToken();
             if (t != null){
-                if(t.getNome() != TipoToken.Fim){
+                if(!t.getNome().equals("fim_algoritmo")){
                     System.out.println(t);
                 }
                 else{

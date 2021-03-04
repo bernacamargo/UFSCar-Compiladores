@@ -76,7 +76,7 @@ public class LeitorDeArquivos {
 
     public void incrementarLinha(){
         linhaAtual++;
-        System.out.println(linhaAtual);
+//        System.out.println(linhaAtual);
     }
 
     private int lerCaractereDoBuffer(){
@@ -105,8 +105,6 @@ public class LeitorDeArquivos {
     }
 
     public void confirmar(){
-        if (lexema.length() > 0 && lexema.contains(String.valueOf('\n')))
-            incrementarLinha();
         inicioLexema = ponteiro;
         lexema = "";
     }
