@@ -5,8 +5,19 @@ public class Main {
         AnalisadorLexico lex = new AnalisadorLexico(args[0]);
         Token t = null;
 
-        while((t = lex.proximoToken()) != null){
-            System.out.println(t);
+        while(true){
+            t = lex.proximoToken();
+            if (t != null){
+                if(t.getNome() != TipoToken.Fim){
+                    System.out.println(t);
+                }
+                else{
+                    break;
+                }
+            }
+            else{
+                break;
+            }
         }
 
     }
