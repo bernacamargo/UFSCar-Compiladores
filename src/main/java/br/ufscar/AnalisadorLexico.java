@@ -2,6 +2,7 @@ package br.ufscar;
 
 public class AnalisadorLexico {
     LeitorDeArquivos leitorDeArquivos;
+    ErroLexico erroLexico = new ErroLexico();
 
     public AnalisadorLexico(String arquivo){
         this.leitorDeArquivos = new LeitorDeArquivos(arquivo);
@@ -9,75 +10,120 @@ public class AnalisadorLexico {
 
     public Token proximoToken(){
         char charInvalido;
+        boolean validaComentario;
 
         Token proximo;
-        espacosEComentarios();
-        leitorDeArquivos.confirmar();
-        proximo = fim();
-        if (proximo == null) {
-            leitorDeArquivos.zerar();
-        } else {
+        validaComentario = espacosEComentarios();
+        if(validaComentario){
             leitorDeArquivos.confirmar();
-            return proximo;
+            proximo = fim();
+            if (proximo == null) {
+                leitorDeArquivos.zerar();
+            } else {
+                leitorDeArquivos.confirmar();
+                return proximo;
+            }
+            proximo = palavrasChave();
+            if (proximo == null) {
+                leitorDeArquivos.zerar();
+            } else {
+                leitorDeArquivos.confirmar();
+                return proximo;
+            }
+            proximo = variavel();
+            if (proximo == null) {
+                leitorDeArquivos.zerar();
+            } else {
+                leitorDeArquivos.confirmar();
+                return proximo;
+            }
+            proximo = numeros();
+            if (proximo == null) {
+                leitorDeArquivos.zerar();
+            } else {
+                leitorDeArquivos.confirmar();
+                return proximo;
+            }
+            proximo = operadorAritmetico();
+            if (proximo == null) {
+                leitorDeArquivos.zerar();
+            } else {
+                leitorDeArquivos.confirmar();
+                return proximo;
+            }
+            proximo = operadorRelacional();
+            if (proximo == null) {
+                leitorDeArquivos.zerar();
+            } else {
+                leitorDeArquivos.confirmar();
+                return proximo;
+            }
+            proximo = delimitador();
+            if (proximo == null) {
+                leitorDeArquivos.zerar();
+            } else {
+                leitorDeArquivos.confirmar();
+                return proximo;
+            }
+            proximo = parenteses();
+            if (proximo == null) {
+                leitorDeArquivos.zerar();
+            } else {
+                leitorDeArquivos.confirmar();
+                return proximo;
+            }
+            proximo = cadeia();
+            if (proximo == null) {
+                leitorDeArquivos.zerar();
+            } else {
+                leitorDeArquivos.confirmar();
+                return proximo;
+            }
+            proximo = agrupamentos();
+            if (proximo == null) {
+                leitorDeArquivos.zerar();
+            } else {
+                leitorDeArquivos.confirmar();
+                return proximo;
+            }
+            proximo = operadoresMemoria();
+            if (proximo == null) {
+                leitorDeArquivos.zerar();
+            } else {
+                leitorDeArquivos.confirmar();
+                return proximo;
+            }
+            proximo = variavelRegistro();
+            if (proximo == null) {
+                leitorDeArquivos.zerar();
+            } else {
+                leitorDeArquivos.confirmar();
+                return proximo;
+            }
+            proximo = definicaoArray();
+            if (proximo == null) {
+                leitorDeArquivos.zerar();
+            } else {
+                leitorDeArquivos.confirmar();
+                return proximo;
+            }
+
+
+            charInvalido = (char) leitorDeArquivos.bufferDeLeitura[leitorDeArquivos.ponteiro];
+            erroLexico.setTemErroLexio(true);
+            erroLexico.setCharInvalido(charInvalido);
+            if(charInvalido == '"'){
+                erroLexico.setMensagem("Linha " + leitorDeArquivos.linhaAtual + ": cadeia literal nao fechada");
+            }
+            else {
+                erroLexico.setMensagem("Linha " + leitorDeArquivos.linhaAtual + ": " + charInvalido + " - simbolo nao identificado");
+            }
         }
-        proximo = palavrasChave();
-        if (proximo == null) {
-            leitorDeArquivos.zerar();
-        } else {
-            leitorDeArquivos.confirmar();
-            return proximo;
+        else{
+            erroLexico.setTemErroLexio(true);
+            erroLexico.setMensagem("Linha " + leitorDeArquivos.linhaAtual + ": comentario nao fechado");
         }
-        proximo = variavel();
-        if (proximo == null) {
-            leitorDeArquivos.zerar();
-        } else {
-            leitorDeArquivos.confirmar();
-            return proximo;
-        }
-        proximo = numeros();
-        if (proximo == null) {
-            leitorDeArquivos.zerar();
-        } else {
-            leitorDeArquivos.confirmar();
-            return proximo;
-        }
-        proximo = operadorAritmetico();
-        if (proximo == null) {
-            leitorDeArquivos.zerar();
-        } else {
-            leitorDeArquivos.confirmar();
-            return proximo;
-        }
-        proximo = operadorRelacional();
-        if (proximo == null) {
-            leitorDeArquivos.zerar();
-        } else {
-            leitorDeArquivos.confirmar();
-            return proximo;
-        }
-        proximo = delimitador();
-        if (proximo == null) {
-            leitorDeArquivos.zerar();
-        } else {
-            leitorDeArquivos.confirmar();
-            return proximo;
-        }
-        proximo = parenteses();
-        if (proximo == null) {
-            leitorDeArquivos.zerar();
-        } else {
-            leitorDeArquivos.confirmar();
-            return proximo;
-        }
-        proximo = cadeia();
-        if (proximo == null) {
-            leitorDeArquivos.zerar();
-        } else {
-            leitorDeArquivos.confirmar();
-            return proximo;
-        }
-        charInvalido = (char) leitorDeArquivos.bufferDeLeitura[leitorDeArquivos.ponteiro];
-        System.err.println("Linha " + leitorDeArquivos.linhaAtual + ": " + charInvalido + " - simbolo nao identificado");
+
         return null;
     }
 
@@ -93,9 +139,23 @@ public class AnalisadorLexico {
                 return new Token("+", "+");
             case '-':
                 return new Token("-", "-");
+            case '%':
+                return new Token("%", "%");
         }
 
         return null;
+    }
+
+    private Token operadoresMemoria(){
+        char c = (char) leitorDeArquivos.lerProximoCaractere();
+        switch (c){
+            case '^':
+                return new Token("^", "^");
+            case '&':
+                return new Token("&", "&");
+            default:
+                return null;
+        }
     }
 
     private Token operadorRelacional(){
@@ -107,6 +167,8 @@ public class AnalisadorLexico {
                 return new Token("<>","<>");
             else if(c == '=')
                 return new Token("<=","<=");
+            else if(c == '-')
+                return new Token("<-", "<-");
             else{
                 leitorDeArquivos.retroceder();
                 return new Token("<","<");
@@ -116,8 +178,10 @@ public class AnalisadorLexico {
             c = (char)leitorDeArquivos.lerProximoCaractere();
             if(c == '=')
                 return new Token(">=",">=");
-            else
+            else{
+                leitorDeArquivos.retroceder();
                 return new Token(">",">");
+            }
         }
         else if(c == '='){
             return new Token("=", "=");
@@ -167,7 +231,14 @@ public class AnalisadorLexico {
                         if (Character.isDigit(c)) {
                             estado = 3;
                         } else {
-                            return null;
+                            if(c == '.'){
+                                leitorDeArquivos.retroceder();
+                                leitorDeArquivos.retroceder();
+                                return new Token(leitorDeArquivos.getLexema(), TipoToken.NUM_INT.toString());
+                            }
+                            else{
+                                return null;
+                            }
                         }
                     } else if (!Character.isDigit(c)) {
                         leitorDeArquivos.retroceder();
@@ -196,7 +267,7 @@ public class AnalisadorLexico {
                     }
                     break;
                 case 2:
-                    if (!Character.isLetterOrDigit(c)) {
+                    if (!Character.isLetterOrDigit(c) && c != '_') {
                         leitorDeArquivos.retroceder();
                         return new Token(leitorDeArquivos.getLexema(), TipoToken.IDENT.toString());
                     }
@@ -235,8 +306,10 @@ public class AnalisadorLexico {
             }
         }
     }
-    private void espacosEComentarios() {
+    private boolean espacosEComentarios() {
         int estado = 1;
+        boolean validaComentario = false;
+        boolean temComentario = false;
         while (true) {
             char c = (char) leitorDeArquivos.lerProximoCaractere();
             switch (estado) {
@@ -247,31 +320,38 @@ public class AnalisadorLexico {
                         }
                         estado = 2;
                     } else if (c == '{') {
+                        temComentario = true;
                         estado = 3;
                     } else {
                         leitorDeArquivos.retroceder();
-                        return;
+                        return true;
                     }
                     break;
                 case 2:
                     if (c == '{') {
+                        temComentario = true;
+                        validaComentario = false;
                         estado = 3;
+                    }
+                    else if(temComentario && !validaComentario && c == '\n'){
+                        return false;
                     }
                     else if(c == '\n'){
                         leitorDeArquivos.incrementarLinha();
                     }
                     else if (!(Character.isWhitespace(c) || c == ' ')) {
                         leitorDeArquivos.retroceder();
-                        return;
+                        return !temComentario || validaComentario;
                     }
                     break;
                 case 3:
                     if(c == '}') {
-                        break;
+                        validaComentario = true;
+                        estado = 2;
                     }
                     else if (c == '\n') {
                         estado = 2;
-                        leitorDeArquivos.incrementarLinha();
+                        leitorDeArquivos.retroceder();
                     }
                     break;
             }
@@ -292,35 +372,114 @@ public class AnalisadorLexico {
                         return new Token(lexema, lexema);
                     case "literal":
                         return new Token(lexema, lexema);
-                    case "REAL":
+                    case "real":
                         return new Token(lexema, lexema);
-                    case "ATRIBUIR":
+                    case "logico":
                         return new Token(lexema, lexema);
-                    case "A":
+                    case "nao":
                         return new Token(lexema, lexema);
                     case "leia":
                         return new Token(lexema, lexema);
                     case "escreva":
                         return new Token(lexema, lexema);
-                    case "SE":
+                    case "se":
                         return new Token(lexema, lexema);
-                    case "ENTAO":
+                    case "entao":
                         return new Token(lexema, lexema);
-                    case "ENQUANTO":
+                    case "senao":
                         return new Token(lexema, lexema);
-                    case "INICIO":
+                    case "fim_se":
                         return new Token(lexema, lexema);
                     case "fim_algoritmo":
                         return new Token(lexema, lexema);
-                    case "E":
+                    case "caso":
                         return new Token(lexema, lexema);
-                    case "OU":
+                    case "fim_caso":
+                        return new Token(lexema, lexema);
+                    case "seja":
+                        return new Token(lexema, lexema);
+                    case "e":
+                        return new Token(lexema, lexema);
+                    case "ou":
+                        return new Token(lexema, lexema);
+                    case "..":
+                        return new Token(lexema, lexema);
+                    case "para":
+                        return new Token(lexema, lexema);
+                    case "fim_para":
+                        return new Token(lexema, lexema);
+                    case "ate":
+                        return new Token(lexema, lexema);
+                    case "faca":
+                        return new Token(lexema, lexema);
+                    case "enquanto":
+                        return new Token(lexema, lexema);
+                    case "fim_enquanto":
+                        return new Token(lexema, lexema);
+                    case "registro":
+                        return new Token(lexema, lexema);
+                    case "fim_registro":
+                        return new Token(lexema, lexema);
+                    case "tipo":
+                        return new Token(lexema, lexema);
+                    case "var":
+                        return new Token(lexema, lexema);
+                    case "procedimento":
+                        return new Token(lexema, lexema);
+                    case "fim_procedimento":
+                        return new Token(lexema, lexema);
+                    case "funcao":
+                        return new Token(lexema, lexema);
+                    case "fim_funcao":
+                        return new Token(lexema, lexema);
+                    case "retorne":
+                        return new Token(lexema, lexema);
+                    case "constante":
+                        return new Token(lexema, lexema);
+                    case "falso":
+                        return new Token(lexema, lexema);
+                    case "verdadeiro":
                         return new Token(lexema, lexema);
                     default:
                         return null;
                 }
             }
         }
+    }
+
+    private Token agrupamentos(){
+        char c = (char) leitorDeArquivos.lerProximoCaractere();
+
+        if(c == '.'){
+            c = (char) leitorDeArquivos.lerProximoCaractere();
+            if(c == '.'){
+                return new Token(leitorDeArquivos.getLexema(), leitorDeArquivos.getLexema());
+            }
+        }
+
+        return null;
+    }
+
+    private Token variavelRegistro() {
+        char c = (char) leitorDeArquivos.lerProximoCaractere();
+        if(c == '.'){
+            return new Token(leitorDeArquivos.getLexema(), leitorDeArquivos.getLexema());
+        }
+
+        return null;
+    }
+
+    private Token definicaoArray(){
+        char c = (char) leitorDeArquivos.lerProximoCaractere();
+        if(c == '['){
+            return new Token(leitorDeArquivos.getLexema(), leitorDeArquivos.getLexema());
+        }
+        else if(c == ']'){
+            return new Token(leitorDeArquivos.getLexema(), leitorDeArquivos.getLexema());
+        }
+
+        return null;
+
     }
 
     private Token fim() {
