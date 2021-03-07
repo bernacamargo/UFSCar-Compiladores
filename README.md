@@ -6,15 +6,11 @@ Este projeto consiste na implementação de um analisador lexico para a linguage
 
 ---
 
-<br>
-
 ### Autores
 
 -   Bernardo Camargo [@bernacamargo](https://github.com/bernacamargo)
 -   Paulo Betareli [@paulobetareli](https://github.com/paulobetareli)
 -   Renata Praisler [@RenataPraisler](https://github.com/RenataPraisler)
-
-<br>
 
 ## Como utilizar
 
