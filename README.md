@@ -37,10 +37,10 @@ Este projeto consiste na implementação de um analisador lexico para a linguage
 -   Comando:
 
     ```sh
-    $ java -jar ./analisador-lexico.jar ./algoritmo.la ./analise-lexica-algoritmo.txt
+    $ java -jar ./analisador-lexico.jar ./algoritmo.txt ./analise-lexica-algoritmo.txt
     ```
 
--   Entrada: algoritmo.la
+-   Entrada: algoritmo.txt
 
     ```
     { classificação da faixa etária segundo um critério arbitrário }
