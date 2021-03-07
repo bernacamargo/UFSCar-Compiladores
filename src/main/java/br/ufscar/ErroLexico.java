@@ -1,5 +1,10 @@
 package br.ufscar;
 
+/**
+ * ErroLexico
+ *
+ * Representa o retorno de erro lexico
+ */
 public class ErroLexico {
     private boolean temErroLexio;
     private char charInvalido;

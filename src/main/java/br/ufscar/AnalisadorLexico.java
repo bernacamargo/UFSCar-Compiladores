@@ -8,6 +8,13 @@ public class AnalisadorLexico {
         this.leitorDeArquivos = new LeitorDeArquivos(arquivo);
     }
 
+    /**
+     * proximoToken
+     *
+     * Busca pelo próximo Token existente, baseado nas sequencias de caracteres (lexemas) do arquivo de entrada
+     *
+     * @return Token @Nullable
+     */
     public Token proximoToken(){
         char charInvalido;
         boolean validaComentario;
@@ -86,7 +93,7 @@ public class AnalisadorLexico {
                 leitorDeArquivos.confirmar();
                 return proximo;
             }
-            proximo = operadoresMemoria();
+            proximo = operadorMemoria();
             if (proximo == null) {
                 leitorDeArquivos.zerar();
             } else {
@@ -100,7 +107,7 @@ public class AnalisadorLexico {
                 leitorDeArquivos.confirmar();
                 return proximo;
             }
-            proximo = definicaoArray();
+            proximo = chaves();
             if (proximo == null) {
                 leitorDeArquivos.zerar();
             } else {
@@ -127,6 +134,14 @@ public class AnalisadorLexico {
         return null;
     }
 
+    /**
+     *
+     * operadorAritmetico
+     *
+     * Verifica se o próximo lexema é um operador aritmético
+     *
+     * @return Token @Nullable
+     */
     private Token operadorAritmetico() {
         int caractereRecebido = leitorDeArquivos.lerProximoCaractere();
         char c = (char) caractereRecebido;
@@ -146,7 +161,15 @@ public class AnalisadorLexico {
         return null;
     }
 
-    private Token operadoresMemoria(){
+    /**
+     *
+     * operadorMemoria
+     *
+     * Verifica se o próximo lexema é um operador de memória
+     *
+     * @return Token @Nullable
+     */
+    private Token operadorMemoria(){
         char c = (char) leitorDeArquivos.lerProximoCaractere();
         switch (c){
             case '^':
@@ -158,6 +181,14 @@ public class AnalisadorLexico {
         }
     }
 
+    /**
+     *
+     * operadorRelacional
+     *
+     * Verifica se o próximo lexema é um operador relacional
+     *
+     * @return Token @Nullable
+     */
     private Token operadorRelacional(){
         int caractereRecebido = leitorDeArquivos.lerProximoCaractere();
         char c = (char) caractereRecebido;
@@ -190,6 +221,13 @@ public class AnalisadorLexico {
         return null;
     }
 
+    /**
+     * delimitador()
+     *
+     * Verifica se o lexema é um delimitador
+     *
+     * @return Token @Nullable
+     */
     private Token delimitador() {
         int caractereLido = leitorDeArquivos.lerProximoCaractere();
         char c = (char) caractereLido;
@@ -201,6 +239,13 @@ public class AnalisadorLexico {
         }
     }
 
+    /**
+     * delimitador()
+     *
+     * Verifica se o lexema é um parenteses
+     *
+     * @return Token @Nullable
+     */
     private Token parenteses(){
         int caractereRecebido = leitorDeArquivos.lerProximoCaractere();
         char c = (char) caractereRecebido;
@@ -213,6 +258,14 @@ public class AnalisadorLexico {
         return null;
     }
 
+
+    /**
+     * numeros()
+     *
+     * Maquina de estados para verificar se o lexema é um número
+     *
+     * @return Token @Nullable
+     */
     private Token numeros() {
         int estado = 1;
         while (true) {
@@ -254,6 +307,14 @@ public class AnalisadorLexico {
             }
         }
     }
+
+    /**
+     * variavel()
+     *
+     * Maquina de estados para verificar se o lexema é uma varíavel
+     *
+     * @return Token @Nullable
+     */
     private Token variavel() {
         int estado = 1;
         while (true) {
@@ -278,6 +339,14 @@ public class AnalisadorLexico {
             }
         }
     }
+
+    /**
+     * cadeia()
+     *
+     * Maquina de estados para verificar se o lexema é uma cadeia de caracter (string)
+     *
+     * @return Token @Nullable
+     */
     private Token cadeia() {
         int estado = 1;
         while (true) {
@@ -306,6 +375,14 @@ public class AnalisadorLexico {
             }
         }
     }
+
+    /**
+     * espacosEComentarios()
+     *
+     * Maquina de estados para ignorar os espaços em branco, validar os comentários e realizar a contagem de linhas
+     *
+     * @return Token @Nullable
+     */
     private boolean espacosEComentarios() {
         int estado = 1;
         boolean validaComentario = false;
@@ -357,6 +434,14 @@ public class AnalisadorLexico {
             }
         }
     }
+
+    /**
+     * palavrasChave()
+     *
+     * Maquina de estados para verificar se o lexema é uma palavra chave reservada da linguagem
+     *
+     * @return Token @Nullable
+     */
     private Token palavrasChave() {
         while (true) {
             char c = (char) leitorDeArquivos.lerProximoCaractere();
@@ -447,6 +532,13 @@ public class AnalisadorLexico {
         }
     }
 
+    /**
+     * agrupamentos()
+     *
+     * Verifica se o lexema é um agrupamento
+     *
+     * @return Token @Nullable
+     */
     private Token agrupamentos(){
         char c = (char) leitorDeArquivos.lerProximoCaractere();
 
@@ -460,6 +552,13 @@ public class AnalisadorLexico {
         return null;
     }
 
+    /**
+     * variavelRegistro()
+     *
+     * Verifica se o lexema é uma variave de registro (estrutura de dados)
+     *
+     * @return Token @Nullable
+     */
     private Token variavelRegistro() {
         char c = (char) leitorDeArquivos.lerProximoCaractere();
         if(c == '.'){
@@ -469,19 +568,30 @@ public class AnalisadorLexico {
         return null;
     }
 
-    private Token definicaoArray(){
+    /**
+     * chaves()
+     *
+     * Verifica se o lexema é uma chave []
+     *
+     * @return Token @Nullable
+     */
+    private Token chaves(){
         char c = (char) leitorDeArquivos.lerProximoCaractere();
-        if(c == '['){
-            return new Token(leitorDeArquivos.getLexema(), leitorDeArquivos.getLexema());
-        }
-        else if(c == ']'){
-            return new Token(leitorDeArquivos.getLexema(), leitorDeArquivos.getLexema());
-        }
 
+        if(c == '[' || c == ']'){
+            return new Token(leitorDeArquivos.getLexema(), leitorDeArquivos.getLexema());
+        }
         return null;
 
     }
 
+    /**
+     * fim()
+     *
+     * Verifica se o lexema é o fim do algoritmo
+     *
+     * @return Token @Nullable
+     */
     private Token fim() {
         int caractereLido = leitorDeArquivos.lerProximoCaractere();
         if (caractereLido == -1) {

@@ -2,23 +2,46 @@ package br.ufscar;
 
 import java.util.Arrays;
 
+/**
+ * Token
+ *
+ * Representa o token gerado a partir de um lexema
+ */
 public class Token {
     private String nome;
     private String lexema;
 
+    /**
+     * Token()
+     *
+     * Construtor da Classe
+     *
+     * @param lexema - Sequencia de caracteres
+     * @param nome - Titulo do token
+     */
     public Token(String lexema, String nome) {
         this.nome = nome;
         this.lexema = lexema;
     }
 
-    public String getLexema() {
-        return lexema;
-    }
-
+    /**
+     * getNome()
+     *
+     * Retorna o nome do token
+     *
+     * @return String
+     */
     public String getNome() {
         return nome;
     }
 
+    /**
+     * toString()
+     *
+     * Sobreescrita do método toString() para que exiba o token da maneira correta
+     *
+     * @return String - Token formatado com nome e o lexema
+     */
     @Override
     public String toString() {
         boolean isTipoToken;
