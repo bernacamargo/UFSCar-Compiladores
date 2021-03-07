@@ -18,12 +18,12 @@ Este projeto consiste na implementação de um analisador lexico para a linguage
 2. Faça o download do executável [analisador-lexico.jar](https://github.com/bernacamargo/UFSCar-Compiladores-analise-lexica/raw/main/analisador-lexico.jar)
 3. Agora basta executar o programa baixado através de um terminal. Para isso utilizaremos o comando `java -jar` juntamente com os seguintes parâmetros:
 
-    - O caminho absoluto para o arquivo baixado no passo anterior;
-    - O caminho absoluto do arquivo de entrada que contém o código em LA;
-    - O caminho absoluto do arquivo de saída.
+    - **ARG1:** O caminho absoluto para o arquivo baixado no passo anterior;
+    - **ARG2:** O caminho absoluto do arquivo de entrada que contém o código em LA;
+    - **ARG3:** O caminho absoluto do arquivo de saída.
 
     ```sh
-     $ java -jar <analisador-lexico.jar> <INPUT> <OUTPUT>
+     $ java -jar ARG1 ARG2 ARG3
     ```
 
     > Os caminhos enviados como parâmetros devem ser **absolutos** e não relativos.
@@ -37,10 +37,10 @@ Este projeto consiste na implementação de um analisador lexico para a linguage
 -   Comando:
 
     ```sh
-    $ java -jar ./analisador-lexico.jar ./algoritmo.txt ./analise-lexica-algoritmo.txt
+    $ java -jar ./analisador-lexico.jar ./algoritmo.la ./analise-lexica-algoritmo.txt
     ```
 
--   Entrada: algoritmo.txt
+-   Entrada: algoritmo.la
 
     ```
     { classificação da faixa etária segundo um critério arbitrário }
