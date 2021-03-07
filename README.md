@@ -32,10 +32,12 @@ Este projeto consiste na implementação de um analisador lexico para a linguage
 
 ### Exemplo:
 
+> O arquivo executável .jar e o algoritmo.txt estão na pasta raiz do projeto
+
 -   Comando:
 
     ```sh
-    $ java -jar /tmp/analisador-lexico.jar /tmp/algoritmo.txt /tmp/analise-lexica-algoritmo.txt
+    $ java -jar ./analisador-lexico.jar ./algoritmo.txt ./analise-lexica-algoritmo.txt
     ```
 
 -   Entrada: algoritmo.txt
