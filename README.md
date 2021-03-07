@@ -22,6 +22,7 @@ Este projeto consiste na implementação de um analisador lexico para a linguage
     - **ARG2:** O caminho absoluto do arquivo de entrada que contém o código em LA;
     - **ARG3:** O caminho absoluto do arquivo de saída.
 
+    <br>
     ```sh
      $ java -jar ARG1 ARG2 ARG3
     ```
