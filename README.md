@@ -39,7 +39,7 @@ Este projeto consiste na implementação de um analisador lexico para a linguage
 -   Comando:
 
     ```sh
-    $ java -jar /home/user/compiladores/analisador-lexico/analisador-lexico.jar /home/user/compiladores/analisador-lexico/algoritmo.txt /home/user/compiladores/analisador-lexico/analise-lexica-algoritmo.txt
+    $ java -jar /home/user/compiladores/analisador-lexico/analisador-lexico.jar /home/user/compiladores/analisador-lexico/algoritmo.txt /home/user/compiladores/analisador-lexico/out.txt
     ```
 
 -   Entrada: algoritmo.txt
