@@ -42,7 +42,7 @@ Este projeto consiste na implementação de um analisador lexico para a linguage
     $ java -jar /tmp/analisador-lexico.jar /tmp/algoritmo.txt /tmp/analise-lexica-algoritmo.txt
     ```
 
--   Entrada:
+-   Entrada: algoritmo.txt
 
     ```
     { classificação da faixa etária segundo um critério arbitrário }
@@ -67,7 +67,7 @@ Este projeto consiste na implementação de um analisador lexico para a linguage
 
     ```
 
--   Saída:
+-   Saída: out.txt
 
     ```
     <'algoritmo','algoritmo'>
