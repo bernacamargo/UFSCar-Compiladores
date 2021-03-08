@@ -8,9 +8,9 @@ Este projeto consiste na implementação de um analisador lexico para a linguage
 
 ### Autores
 
--   Bernardo Camargo [@bernacamargo](https://github.com/bernacamargo)
--   Paulo Betareli [@paulobetareli](https://github.com/paulobetareli)
--   Renata Praisler [@RenataPraisler](https://github.com/RenataPraisler)
+-   Bernardo Camargo [@bernacamargo](https://github.com/bernacamargo) - 620343
+-   Paulo Betareli [@paulobetareli](https://github.com/paulobetareli) - 587648
+-   Renata Praisler [@RenataPraisler](https://github.com/RenataPraisler) - 746044
 
 ## Como utilizar
 
