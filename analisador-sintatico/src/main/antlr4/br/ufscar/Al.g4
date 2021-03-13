@@ -11,7 +11,7 @@ REAL: 'real';
 LOGICO: 'logico';
 VERDADEIRO: 'verdadeiro';
 FALSO: 'falso';
-REGISTROW: 'registro';
+REGISTRO: 'registro';
 FIM_REGISTRO: 'fim_registro';
 PROCEDIMENTO: 'procedimento';
 FIM_PROCEDIMENTO: 'fim_procedimento';
@@ -68,9 +68,9 @@ CADEIA: '"' (ESC_SEQ | ~('"' | '\n') )* '"';
 
 CADEIA_NAO_FECHADA: '"' (ESC_SEQ | ~('"') )* '\n';
 
-COMENTARIO: '{' ~('\n' | '\r' | '}')* '}' -> skip; 
+COMENTARIO: '{' ~('\n' | '\r' | '}')* '}' -> skip;
 
-COMENTARIO_NAO_FECHADO: '{' ~('\n' | '\r' | '}')* '\n'; 
+COMENTARIO_NAO_FECHADO: '{' ~('\n' | '\r' | '}')* '\n';
 
 NUM_INT: ('0'..'9')+;
 
@@ -78,7 +78,7 @@ NUM_REAL: ('0'..'9')+ ('.' ('0'..'9')+)?;
 
 WS: ( ' ' | '\t' | '\r' | '\n') {skip();};
 
-UNDEFINED_CHAR: .;  
+UNDEFINED_CHAR: .;
 
 // Analis. Sintático 
 
@@ -108,7 +108,7 @@ extend_type: ESTENDIDO? basic_type_ident ;
 
 const_value : CADEIA | NUM_INT | NUM_REAL | VERDADEIRO | FALSO ;
 
-register: REGISTROW variable* FIM_REGISTRO ;
+register: REGISTRO variable* FIM_REGISTRO ;
 
 global_declaration: PROCEDIMENTO IDENT ABRE_PARENTESE parameters? FECHA_PARENTESE local_declaration* cmd* FIM_PROCEDIMENTO
                   | FUNCAO IDENT ABRE_PARENTESE parameters? FECHA_PARENTESE DOIS_PONTOS extend_type local_declaration*
