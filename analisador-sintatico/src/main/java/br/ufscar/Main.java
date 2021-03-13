@@ -15,7 +15,7 @@ import org.antlr.v4.runtime.CommonTokenStream;
 
 /**
  *
- * @author paulo
+ * @author bernardo, paulo, renata
  */
 public class Main {
 
@@ -25,15 +25,15 @@ public class Main {
      public static void main(String args[]) {
         CharStream cs;
         try {
-            cs = CharStreams.fromFileName(args[0]);
-            AlLexer lex = new AlLexer(cs);
+            cs = CharStreams.fromFileName(args[0]); 
+            AlLexer lex = new AlLexer(cs);  // iniciar o objeto lex com cs 
 
-            CommonTokenStream tokens = new CommonTokenStream(lex);
+            CommonTokenStream tokens = new CommonTokenStream(lex); //gerador do token 
             AlParser parser = new AlParser(tokens);
 
-            CustomErrorListener customErrorListener = new CustomErrorListener(args[1], lex);
+            CustomErrorListener customErrorListener = new CustomErrorListener(args[1], lex); //para apontar o erro na saida
 
-            parser.addErrorListener(customErrorListener);
+            parser.addErrorListener(customErrorListener); 
             parser.progr();
         } 
         catch (IOException ex) {
