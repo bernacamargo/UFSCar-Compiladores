@@ -12,6 +12,7 @@ public class CustomErrorListener implements ANTLRErrorListener {
     AlLexer lex;
     FileWriter fileWriter;
 
+    // Recebe o arquivo e lexema para retornar o errro no arquivo
     public CustomErrorListener(String filePath, AlLexer lex) {
         this.lex = lex;
         try {
@@ -27,25 +28,25 @@ public class CustomErrorListener implements ANTLRErrorListener {
         String ident = token.getText();
 
         try {
-            // Caractere nao encontrado
+            // ERROR : Caractere nao encontrado
             if(token.getType() == 69) {
                 fileWriter.write("Linha " + line + ": " + ident + " - simbolo nao identificado" +"\nFim da compilacao\n");
                 return;
             }
 
-            // Comentario não fechado
+            // ERROR : Comentario não fechado
             if(ident.contains("{")) {
                 fileWriter.write("Linha " + line + ": comentario nao fechado" + "\nFim da compilacao\n" );
                 return;
             }
 
-            // Cadeia de literais não fechada
+            // ERROR : Cadeia de literais não fechada
             if(ident.contains("\"") && !ident.endsWith("\"")) {
                 fileWriter.write("Linha " + line + ": cadeia literal nao fechada" +"\nFim da compilacao\n" );
                 return;
             }
 
-            // Adaptando o identificador EOF para a saida esperada eplo corretor
+            // Adaptando o identificador EOF para a saida esperada pelo corretor 
             if(ident.equals("<EOF>")) {
                 ident = "EOF";
             }
@@ -67,16 +68,16 @@ public class CustomErrorListener implements ANTLRErrorListener {
 
     @Override
     public void reportAmbiguity(Parser parser, DFA dfa, int i, int i1, boolean b, BitSet bitSet, ATNConfigSet atnConfigSet) {
-
+      //Nao implementado para o trab2
     }
 
     @Override
     public void reportAttemptingFullContext(Parser parser, DFA dfa, int i, int i1, BitSet bitSet, ATNConfigSet atnConfigSet) {
-
+      //Nao implementado para o trab2
     }
 
     @Override
     public void reportContextSensitivity(Parser parser, DFA dfa, int i, int i1, int i2, ATNConfigSet atnConfigSet) {
-
+     //Nao implementado para o trab2
     }
 }
