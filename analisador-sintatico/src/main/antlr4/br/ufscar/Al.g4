@@ -1,4 +1,4 @@
-grammar AlgLex;
+grammar Al;
 
 ALGORITMO: 'algoritmo';
 FIM_ALGORITMO: 'fim_algoritmo';
