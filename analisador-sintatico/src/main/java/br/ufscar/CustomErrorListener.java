@@ -28,7 +28,7 @@ public class CustomErrorListener implements ANTLRErrorListener {
 
         try {
             // Caractere nao encontrado
-            if(token.getType() == 68) {
+            if(token.getType() == 69) {
                 fileWriter.write("Linha " + line + ": " + ident + " - simbolo nao identificado" +"\nFim da compilacao\n");
                 return;
             }
@@ -52,9 +52,15 @@ public class CustomErrorListener implements ANTLRErrorListener {
 
             fileWriter.write("Linha " + line +": erro sintatico proximo a " + ident + "\nFim da compilacao\n" );
 
-            fileWriter.close();
+
         }catch (IOException ex){
             e.printStackTrace();
+        } finally {
+            try {
+                fileWriter.close();
+            } catch (IOException ioException) {
+                ioException.printStackTrace();
+            }
         }
 
     }
