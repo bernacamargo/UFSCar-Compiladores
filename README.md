@@ -1,8 +1,8 @@
 # Construção de Compiladores
 
-## Analisador Léxico
+## Analisador Sintático
 
-Este projeto consiste na implementação de um analisador lexico para a linguagem LA (Linguagem Algorítma). O objetivo deste programa é analisar e reportar erros lexicos que um código em LA possa ter.
+Este projeto consiste na implementação de um analisador lexico para a linguagem LA (Linguagem Algorítma). O objetivo deste programa é analisar e reportar erros sintaticos que um código em LA possa ter.
 
 ---
 
@@ -14,8 +14,8 @@ Este projeto consiste na implementação de um analisador lexico para a linguage
 
 ## Como utilizar
 
-1. Primeiramente é necessário ter o Java, no mínimo na versão 11, instalado em seu ambiente.
-2. Faça o download do executável [analisador-lexico.jar](https://github.com/bernacamargo/UFSCar-Compiladores-analise-lexica/raw/main/analisador-lexico.jar)
+1. Primeiramente é necessário ter o Java 11 e o Maven instalados em seu ambiente.
+2. Faça o download do executável [analisador-sintatico.jar](https://github.com/bernacamargo/UFSCar-Compiladores-analise-lexica/raw/analisador-sintatico/analisador-sintatico.jar)
 3. Agora basta executar o programa baixado através de um terminal. Para isso utilizaremos o comando `java -jar` juntamente com os seguintes parâmetros:
 
     - **ARG1:** O caminho absoluto para o arquivo baixado no passo anterior;
@@ -28,13 +28,13 @@ Este projeto consiste na implementação de um analisador lexico para a linguage
      $ java -jar ARG1 ARG2 ARG3
     ```
 
-    > Os caminhos enviados como parâmetros devem ser **absolutos** e não relativos.
+    > Os caminhos enviados como parâmetros devem ser **absolutos**!
 
 4. Feito isso será criado o arquivo de saída com a análise lexica do algoritmo de entrada.
 
 ### Exemplo:
 
-> O arquivo executável .jar e o algoritmo.txt estão na pasta raiz do projeto
+> O arquivo executável .jar está na pasta raiz do projeto
 
 -   Comando:
 
@@ -45,86 +45,25 @@ Este projeto consiste na implementação de um analisador lexico para a linguage
 -   Entrada: algoritmo.txt
 
     ```
-    { classificação da faixa etária segundo um critério arbitrário }
+    { leitura de nome e idade com escrita de mensagem usando estes dados }
+	declare
+		nome: literal
+	declare
+		idade: inteiro
 
-    algoritmo
-        declare idade: inteiro
+	{ leitura de nome e idade do teclado }
+	leia(nome)
+	leia(idade)
 
-        { leitura da idade }
-        leia(idade)
+	{ saída da mensagem na tela }
+	escreva(nome, " tem ", idade, " anos.")
 
-        { classificação }
-        caso idade seja
-            0: escreva("bebe")
-            1..10: escreva("crianca")
-            11..14: escreva("pre-adolescente")
-            15..18: escreva("adolescente")
-            19..120: escreva("adulto")
-        senao
-            escreva("Idade invalida ou sem classificacao definida")
-        fim_caso
     fim_algoritmo
-
     ```
 
 -   Saída: out.txt
 
     ```
-    <'algoritmo','algoritmo'>
-    <'declare','declare'>
-    <'idade',IDENT>
-    <':',':'>
-    <'inteiro','inteiro'>
-    <'leia','leia'>
-    <'(','('>
-    <'idade',IDENT>
-    <')',')'>
-    <'caso','caso'>
-    <'idade',IDENT>
-    <'seja','seja'>
-    <'0',NUM_INT>
-    <':',':'>
-    <'escreva','escreva'>
-    <'(','('>
-    <'"bebe"',CADEIA>
-    <')',')'>
-    <'1',NUM_INT>
-    <'..','..'>
-    <'10',NUM_INT>
-    <':',':'>
-    <'escreva','escreva'>
-    <'(','('>
-    <'"crianca"',CADEIA>
-    <')',')'>
-    <'11',NUM_INT>
-    <'..','..'>
-    <'14',NUM_INT>
-    <':',':'>
-    <'escreva','escreva'>
-    <'(','('>
-    <'"pre-adolescente"',CADEIA>
-    <')',')'>
-    <'15',NUM_INT>
-    <'..','..'>
-    <'18',NUM_INT>
-    <':',':'>
-    <'escreva','escreva'>
-    <'(','('>
-    <'"adolescente"',CADEIA>
-    <')',')'>
-    <'19',NUM_INT>
-    <'..','..'>
-    <'120',NUM_INT>
-    <':',':'>
-    <'escreva','escreva'>
-    <'(','('>
-    <'"adulto"',CADEIA>
-    <')',')'>
-    <'senao','senao'>
-    <'escreva','escreva'>
-    <'(','('>
-    <'"Idade invalida ou sem classificacao definida"',CADEIA>
-    <')',')'>
-    <'fim_caso','fim_caso'>
-    <'fim_algoritmo','fim_algoritmo'>
+    Linha 10: erro sintatico proximo a leia
+    Fim da compilacao
     ```
