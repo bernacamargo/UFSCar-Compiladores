@@ -12,9 +12,17 @@ Este projeto consiste na implementação de um analisador lexico para a linguage
 -   Paulo Betareli [@paulobetareli](https://github.com/paulobetareli) - 587648
 -   Renata Praisler [@RenataPraisler](https://github.com/RenataPraisler) - 746044
 
-## Como utilizar
+## Como compilar
 
 1. Primeiramente é necessário ter o Java 11 e o Maven instalados em seu ambiente.
+2. Realize o clone do projeto para seu computador
+3. Acesse a pasta `analisador-sintatico` pelo terminal
+4. Utilize o comando `mvn package` para compilar e gerar as classes Java do ANTLR4 o pacote com as dependencias .jar
+5. Os arquivos gerados na build podem ser localizados na pasta `target`.
+
+## Como utilizar
+
+1. É necessário ter o Java 11 instalado
 2. Faça o download do executável [analisador-sintatico.jar](https://github.com/bernacamargo/UFSCar-Compiladores-analise-lexica/raw/analisador-sintatico/analisador-sintatico.jar)
 3. Agora basta executar o programa baixado através de um terminal. Para isso utilizaremos o comando `java -jar` juntamente com os seguintes parâmetros:
 
