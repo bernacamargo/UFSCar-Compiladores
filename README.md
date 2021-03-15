@@ -2,7 +2,8 @@
 
 ## Analisador Sintático
 
-Este projeto consiste na implementação de um analisador lexico para a linguagem LA (Linguagem Algorítma). O objetivo deste programa é analisar e reportar erros sintaticos que um código em LA possa ter.
+Este projeto consiste na implementação de um compilador para a linguagem LA (Linguagem Algorítma). 
+O objetivo deste etapa é analisar e reportar erros sintaticos que um código em LA possa ter.
 
 ---
 
