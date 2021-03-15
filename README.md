@@ -18,7 +18,7 @@ O objetivo deste etapa é analisar e reportar erros sintaticos que um código em
 1. Primeiramente é necessário ter o Java 11 e o Maven instalados em seu ambiente.
 2. Realize o clone do projeto para seu computador
 3. Acesse a pasta `analisador-sintatico` pelo terminal
-4. Utilize o comando `mvn package` para compilar e gerar as classes Java do ANTLR4 o pacote com as dependencias .jar
+4. Utilize o comando `mvn package` para compilar e gerar as classes Java do ANTLR4 e o pacote com as dependencias .jar
 5. Os arquivos gerados na build podem ser localizados na pasta `target`.
 
 ## Como utilizar
