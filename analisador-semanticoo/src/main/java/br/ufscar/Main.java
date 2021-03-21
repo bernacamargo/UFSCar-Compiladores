@@ -33,14 +33,6 @@ public class Main {
             AlParser parser = new AlParser(tokens);
             AlParser.ProgrContext arvore = parser.progr();
 
-            // Analisador Semântico
-            // AlSemantico as = new AlSemantico();
-            // as.visitPrograma(arvore);
-            // if(ErrosSemanticos.errosSemanticos.isEmpty()){
-            //   gera o codigo em C
-            // }
-
-
             // Gerador de código
             GeradorCodigoC gerador = new GeradorCodigoC();
             gerador.visitProgr(arvore);

@@ -9,8 +9,8 @@ public class TabelaDeSimbolos {
         tabelaDeSimbolos = new HashMap<>();
     }
 
-    public void inserir(String nome, TipoAl tipo, HashMap parametros, HashMap atributos, TipoAl retorno) {
-        EntradaTabelaDeSimbolos entradaTabelaDeSimbolos = new EntradaTabelaDeSimbolos(nome, tipo, parametros, atributos, retorno);
+    public void inserir(String nome, TipoAl tipo) {
+        EntradaTabelaDeSimbolos entradaTabelaDeSimbolos = new EntradaTabelaDeSimbolos(nome, tipo);
         tabelaDeSimbolos.put(nome, entradaTabelaDeSimbolos);
     }
 

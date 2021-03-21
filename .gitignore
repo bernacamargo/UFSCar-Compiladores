@@ -1,4 +1,7 @@
 target
 .idea
+.run
 out
 gen
+analisador-semanticoo/a.out
+analisador-semanticoo/codigoGerado.c
