@@ -125,7 +125,7 @@ cmd: cmd_read | cmd_write| cmd_if | cmd_case | cmd_for | cmd_while |
 
 cmd_read: LEIA ABRE_PARENTESE ESTENDIDO? identifier (VIRGULA ESTENDIDO? identifier)* FECHA_PARENTESE;
 
-cmd_write: ESCREVA ABRE_PARENTESE expression (VIRGULA expression)* FECHA_PARENTESE;
+cmd_write: ESCREVA ABRE_PARENTESE (CADEIA (VIRGULA arithmetic_exp)? | arithmetic_exp) FECHA_PARENTESE;
 
 cmd_if: SE expression ENTAO cmd* (SENAO cmd*)? FIM_SE;
 
