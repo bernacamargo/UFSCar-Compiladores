@@ -108,7 +108,7 @@ extend_type: ESTENDIDO? basic_type_ident ;
 
 const_value : CADEIA | NUM_INT | NUM_REAL | VERDADEIRO | FALSO ;
 
-register: REGISTRO variable* FIM_REGISTRO ;
+register: REGISTRO variable* FIM_REGISTRO;
 
 global_declaration: PROCEDIMENTO IDENT ABRE_PARENTESE parameters? FECHA_PARENTESE local_declaration* cmd* FIM_PROCEDIMENTO
                   | FUNCAO IDENT ABRE_PARENTESE parameters? FECHA_PARENTESE DOIS_PONTOS extend_type local_declaration*
@@ -125,7 +125,7 @@ cmd: cmd_read | cmd_write| cmd_if | cmd_case | cmd_for | cmd_while |
 
 cmd_read: LEIA ABRE_PARENTESE ESTENDIDO? identifier (VIRGULA ESTENDIDO? identifier)* FECHA_PARENTESE;
 
-cmd_write: ESCREVA ABRE_PARENTESE (CADEIA (VIRGULA arithmetic_exp)? | arithmetic_exp) FECHA_PARENTESE;
+cmd_write: ESCREVA ABRE_PARENTESE ( arithmetic_exp (VIRGULA arithmetic_exp)*) FECHA_PARENTESE;
 
 cmd_if: SE expression ENTAO cmd* (SENAO cmd*)? FIM_SE;
 
@@ -153,7 +153,7 @@ interval_number: single_operator? NUM_INT (PONTOS single_operator? NUM_INT)?;
 
 single_operator: OP_MENOS;
 
-arithmetic_exp: term (op1 term)*;
+arithmetic_exp: ABRE_PARENTESE? term (op1 term)* FECHA_PARENTESE?;
 
 term: factor (op2 factor)*;
 

@@ -4,5 +4,6 @@ public enum TipoAl {
     INTEIRO,
     REAL,
     CADEIA,
-    INVALIDO
+    INVALIDO,
+    TYPEDEF
 }
