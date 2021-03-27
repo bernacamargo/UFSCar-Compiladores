@@ -1,6 +1,7 @@
 package br.ufscar;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public class TabelaDeSimbolos {
     private HashMap<String, EntradaTabelaDeSimbolos> tabelaDeSimbolos;
@@ -15,7 +16,25 @@ public class TabelaDeSimbolos {
     }
 
     public EntradaTabelaDeSimbolos verificar(String nome) {
-        return tabelaDeSimbolos.get(nome);
+
+        EntradaTabelaDeSimbolos retorno = null;
+
+        if(nome.contains("[")){
+            var nomeVetor = nome.split("\\[")[0];
+            for (Map.Entry<String, EntradaTabelaDeSimbolos> entry : tabelaDeSimbolos.entrySet()) {
+                String key = entry.getKey();
+                EntradaTabelaDeSimbolos itemTabela = entry.getValue();
+                if (itemTabela.nome.contains(nomeVetor)) {
+                    retorno = itemTabela;
+                    break;
+                }
+            }
+        }
+        else {
+            retorno = tabelaDeSimbolos.get(nome);
+        }
+
+        return retorno;
     }
 
     public void verificarTipoCustomizados(String nome, String tipoVar) {
