@@ -1,7 +1,7 @@
 package br.ufscar;
 
 import static br.ufscar.TipoAl.REAL;
-import static br.ufscar.Utils.verificaTipoVarParam;
+import static br.ufscar.GeradorUtils.verificaTipoVarParam;
 
 public class GeradorCodigoC extends AlBaseVisitor<Void>{
     StringBuilder saida;
@@ -216,7 +216,7 @@ public class GeradorCodigoC extends AlBaseVisitor<Void>{
             nomeVar = ctx.arithmetic_exp(i).term(0).getText();
             entradaTabelaDeSimbolos = tabela.verificar(nomeVar);
             if(entradaTabelaDeSimbolos != null){
-                tipoVar = Utils.verificaTipoVarParam(entradaTabelaDeSimbolos.tipo);
+                tipoVar = GeradorUtils.verificaTipoVarParam(entradaTabelaDeSimbolos.tipo);
                 saida.append("\"").append(tipoVar).append("\", ");
             }
             visitArithmetic_exp(ctx.arithmetic_exp(i));

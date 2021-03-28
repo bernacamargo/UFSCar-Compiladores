@@ -33,12 +33,20 @@ public class Main {
             AlParser parser = new AlParser(tokens);
             AlParser.ProgrContext arvore = parser.progr();
 
-            // Gerador de código
-            GeradorCodigoC gerador = new GeradorCodigoC();
-            gerador.visitProgr(arvore);
+            // Analisador Semantico
+            SemanticoVisitor semanticoVisitor = new SemanticoVisitor();
+            semanticoVisitor.visitProgr(arvore);
             try(PrintWriter pw = new PrintWriter(args[1])){
-                pw.print(gerador.saida.toString());
+                pw.print(SemanticoUtils.getErrosSemanticos());
             }
+
+//            SemanticoUtils.exibeErrosSemanticos();
+            // Gerador de código
+//            GeradorCodigoC gerador = new GeradorCodigoC();
+//            gerador.visitProgr(arvore);
+//            try(PrintWriter pw = new PrintWriter(args[1])){
+//                pw.print(gerador.saida.toString());
+//            }
         }
         catch (IOException ex) {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);

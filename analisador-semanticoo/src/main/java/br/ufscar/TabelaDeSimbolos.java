@@ -15,11 +15,15 @@ public class TabelaDeSimbolos {
         tabelaDeSimbolos.put(nome, entradaTabelaDeSimbolos);
     }
 
+    public boolean existe(String nome){
+        return verificar(nome) != null;
+    }
+
     public EntradaTabelaDeSimbolos verificar(String nome) {
 
         EntradaTabelaDeSimbolos retorno = null;
 
-        if(nome.contains("[")){
+        if(nome.contains("[")) {
             var nomeVetor = nome.split("\\[")[0];
             for (Map.Entry<String, EntradaTabelaDeSimbolos> entry : tabelaDeSimbolos.entrySet()) {
                 String key = entry.getKey();

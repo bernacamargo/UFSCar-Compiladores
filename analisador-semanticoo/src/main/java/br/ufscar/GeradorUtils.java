@@ -1,6 +1,6 @@
 package br.ufscar;
 
-public class Utils {
+public class GeradorUtils {
 
     public static String verificaTipoVarParam(TipoAl tipoVar) {
         String tipoVarParam;
