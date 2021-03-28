@@ -2,22 +2,45 @@ package br.ufscar;
 
 import org.antlr.v4.runtime.Token;
 
-import java.util.Optional;
+import java.util.ArrayList;
+import java.util.List;
 
 public class SemanticoVisitor extends AlBaseVisitor<Void> {
 
     Escopos escopos;
-    EntradaTabelaDeSimbolos identComp = null;
-    Token identCompToken = null;
+    List<Token> expressaoComparacao = new ArrayList<>();
 
     @Override
     public Void visitProgr(AlParser.ProgrContext ctx) {
         escopos = new Escopos();
+        if (ctx.declarations() != null)
+            visitDeclarations(ctx.declarations());
         visitBody(ctx.body());
 
         escopos.percorrerEscoposAninhados().forEach(it -> {
             System.out.println(it.toString());
         });
+
+        return null;
+    }
+
+    @Override
+    public Void visitDeclarations(AlParser.DeclarationsContext ctx) {
+
+        ctx.local_decl_global().forEach(it -> visitLocal_decl_global(it));
+
+        return null;
+    }
+
+    @Override
+    public Void visitLocal_decl_global(AlParser.Local_decl_globalContext ctx) {
+
+        if (ctx.local_declaration() != null){
+            visitLocal_declaration(ctx.local_declaration());
+        }
+        else if(ctx.global_declaration() != null){
+            return null;
+        }
 
         return null;
     }
@@ -30,12 +53,26 @@ public class SemanticoVisitor extends AlBaseVisitor<Void> {
         return null;
     }
 
-
     @Override
     public Void visitLocal_declaration(AlParser.Local_declarationContext ctx) {
 
         if (ctx.variable() != null){
             visitVariable(ctx.variable());
+        }
+        else if(ctx.CONSTANTE() != null){
+            var ident = ctx.IDENT();
+            var tipo = SemanticoUtils.verificarTipo(ctx.basic_type().getText());
+            var const_value = ctx.const_value().getText();
+
+            if(escopos.obterEscopoAtual().existe(ident.getText())){
+                var entradaTabela = escopos.obterEscopoAtual().verificar(ident.getText());
+                SemanticoUtils.adicionaErroSemantico(entradaTabela, ident.getSymbol().getLine(), ErrosSemanticos.IDENTIFICADOR_EXISTENTE);
+            } else {
+                escopos.obterEscopoAtual().inserir(ident.getText(), tipo, false);
+            }
+        }
+        else if (ctx.TIPOW() != null){
+            visitType(ctx.type());
         }
 
         return null;
@@ -44,22 +81,68 @@ public class SemanticoVisitor extends AlBaseVisitor<Void> {
     @Override
     public Void visitVariable(AlParser.VariableContext ctx) {
 
-        TipoAl tipo = SemanticoUtils.verificarTipo(ctx.type().getText());
-        if (tipo == null){
-            SemanticoUtils.adicionaErroSemantico(ctx.type().getStart(), ErrosSemanticos.TIPO_INEXISTENTE);
-        }
-        else {
-            for(var id: ctx.identifier()){
-                for(var ident: id.IDENT()){
-                    String nome = ident.getText();
-                    if(escopos.obterEscopoAtual().existe(nome)){
-                        SemanticoUtils.adicionaErroSemantico(ident.getSymbol(), ErrosSemanticos.IDENTIFICADOR_EXISTENTE);
-                    } else {
-                        escopos.obterEscopoAtual().inserir(nome, tipo, false);
+        if (ctx.type().extend_type() != null) {
+            var test = ctx.type().getText();
+            TipoAl tipo = SemanticoUtils.verificarTipo(ctx.type().getText());
+            if (tipo == null){
+                SemanticoUtils.adicionaErroSemantico(ctx.type().getText(), ctx.type().getStart().getLine(), ErrosSemanticos.TIPO_INEXISTENTE);
+            }
+            else {
+                for(var id: ctx.identifier()) {
+                    for(var ident: id.IDENT()) {
+                        String nome = ident.getText();
+                        if(escopos.obterEscopoAtual().existe(nome)){
+                            var entradaTabela = escopos.obterEscopoAtual().verificar(nome);
+                            SemanticoUtils.adicionaErroSemantico(entradaTabela, ident.getSymbol().getLine(), ErrosSemanticos.IDENTIFICADOR_EXISTENTE);
+                        } else {
+                            var ponteiro = false;
+                            if (ctx.type().extend_type() != null){
+                                ponteiro = ctx.type().extend_type().ESTENDIDO() != null;
+                            }
+                            escopos.obterEscopoAtual().inserir(nome, tipo, ponteiro);
+                        }
                     }
                 }
             }
         }
+        else if(ctx.type().register() != null){
+
+            ctx.identifier().forEach(identfier -> {
+                ctx.type().register().variable().forEach(it -> {
+                    TipoAl tipo = SemanticoUtils.verificarTipo(it.type().getText());
+                    if (tipo == null){
+                        SemanticoUtils.adicionaErroSemantico(it.type().getText(), it.type().getStart().getLine(), ErrosSemanticos.TIPO_INEXISTENTE);
+                    }
+                    else {
+                        for (var id : it.identifier()) {
+                            for (var ident : id.IDENT()) {
+                                String nome = identfier.getText() + "." + ident.getText();
+                                if (escopos.obterEscopoAtual().existe(nome)) {
+                                    var entradaTabela = escopos.obterEscopoAtual().verificar(nome);
+                                    SemanticoUtils.adicionaErroSemantico(entradaTabela, ident.getSymbol().getLine(), ErrosSemanticos.IDENTIFICADOR_EXISTENTE);
+                                } else {
+                                    var ponteiro = false;
+                                    if (it.type().extend_type() != null) {
+                                        ponteiro = it.type().extend_type().ESTENDIDO() != null;
+                                    }
+                                    escopos.obterEscopoAtual().inserir(nome, tipo, ponteiro);
+                                }
+                            }
+                        }
+                    }
+
+                });
+            });
+        }
+
+
+        return null;
+    }
+
+
+    @Override
+    public Void visitRegister(AlParser.RegisterContext ctx) {
+
 
         return null;
     }
@@ -70,7 +153,7 @@ public class SemanticoVisitor extends AlBaseVisitor<Void> {
         ctx.identifier().forEach(it -> {
             var test = it.getText();
             if (!escopos.obterEscopoAtual().existe(it.getText())){
-                 SemanticoUtils.adicionaErroSemantico(it.getStart(), ErrosSemanticos.IDENTIFICADOR_INEXISTENTE);
+                 SemanticoUtils.adicionaErroSemantico(it.getText(), it.getStart().getLine(), ErrosSemanticos.IDENTIFICADOR_INEXISTENTE);
             }
         });
 
@@ -87,7 +170,7 @@ public class SemanticoVisitor extends AlBaseVisitor<Void> {
 
     @Override
     public Void visitArithmetic_exp(AlParser.Arithmetic_expContext ctx) {
-
+        var test = ctx.getText();
         ctx.term().forEach(it -> visitTerm(it));
 
         return null;
@@ -98,14 +181,20 @@ public class SemanticoVisitor extends AlBaseVisitor<Void> {
 
         var test = ctx.getText();
 
-        ctx.factor().forEach(it -> visitFactor(it));
+        ctx.factor().forEach(it -> {
+            if (ctx.op2() != null) {
+                SemanticoUtils.validaFatoracao(ctx, ctx.op2());
+            }
+            visitFactor(it);
+        });
+
 
         return null;
     }
 
     @Override
     public Void visitFactor(AlParser.FactorContext ctx) {
-
+        var test = ctx.getText();
         ctx.parcel().forEach(it -> visitParcel(it));
 
         return null;
@@ -113,14 +202,12 @@ public class SemanticoVisitor extends AlBaseVisitor<Void> {
 
     @Override
     public Void visitParcel(AlParser.ParcelContext ctx) {
-
+        var test = ctx.getText();
         if (ctx.single_parcel() != null){
             visitSingle_parcel(ctx.single_parcel());
         }
         else if(ctx.non_unary_portion() != null){
-            if (identComp != null && identComp.tipo != TipoAl.CADEIA){
-                SemanticoUtils.adicionaErroSemantico(identCompToken, ErrosSemanticos.ATRIBUICAO_INCOMPATIVEL);
-            }
+            visitNon_unary_portion(ctx.non_unary_portion());
         }
 
         return null;
@@ -133,38 +220,53 @@ public class SemanticoVisitor extends AlBaseVisitor<Void> {
 
         if (ctx.identifier() != null) {
             var parcel = escopos.obterEscopoAtual().verificar(ctx.getText());
-
             if (!escopos.obterEscopoAtual().existe(ctx.getText()) && !SemanticoUtils.getErrosSemanticos().contains(ctx.getText())){
-                SemanticoUtils.adicionaErroSemantico(ctx.getStart(), ErrosSemanticos.IDENTIFICADOR_INEXISTENTE);
+                SemanticoUtils.adicionaErroSemantico(ctx.identifier().getText(), ctx.identifier().getStart().getLine(), ErrosSemanticos.IDENTIFICADOR_INEXISTENTE);
             }
-            else if(parcel != null && identComp != null && parcel.tipo != identComp.tipo && !SemanticoUtils.getErrosSemanticos().contains(ctx.getText())) {
-                var checkLogicalTerm = Optional.ofNullable(ctx.parent.parent.parent.parent.parent.getText()).orElse(null);
-                if (checkLogicalTerm != null && !checkLogicalTerm.contains("<") && !checkLogicalTerm.contains(">") && !checkLogicalTerm.contains("=") && !checkLogicalTerm.contains("<>") && !checkLogicalTerm.contains("<=") && !checkLogicalTerm.contains(">="))
-                    SemanticoUtils.adicionaErroSemantico(identCompToken, ErrosSemanticos.ATRIBUICAO_INCOMPATIVEL);
+            else if(parcel != null && SemanticoUtils.getIdentifierEntradaTabela() != null && parcel.tipo != SemanticoUtils.getIdentifierEntradaTabela().tipo && !SemanticoUtils.getErrosSemanticos().contains(ctx.getText())) {
+                var checkLogicalTerm = SemanticoUtils.getExpression().getText();
+                if (!checkLogicalTerm.contains("<") && !checkLogicalTerm.contains(">") && !checkLogicalTerm.contains("=") && !checkLogicalTerm.contains("<>") && !checkLogicalTerm.contains("<=") && !checkLogicalTerm.contains(">="))
+                    SemanticoUtils.adicionaErroSemantico(SemanticoUtils.getIdentifierEntradaTabela(), SemanticoUtils.getIdentifier().getStart().getLine(), ErrosSemanticos.ATRIBUICAO_INCOMPATIVEL);
             }
         }
-        else if(ctx.NUM_INT() != null){
-            String checkDivisorMult2;
-            var test = Optional.ofNullable(ctx.parent.parent.parent.getText().split(ctx.NUM_INT().getText())).orElse(null);
-            if (test.length >= 2) {
-                checkDivisorMult2 = test[1];
-            }
-            else{
-                checkDivisorMult2 = null;
-            }
-            if (identComp != null && !identComp.tipo.equals(TipoAl.INTEIRO)){
-                if(checkDivisorMult2 != null && (checkDivisorMult2.contains("/") || checkDivisorMult2.contains("*"))){
+        else if(ctx.NUM_INT() != null) {
+            if (SemanticoUtils.getIdentifierEntradaTabela() != null && !SemanticoUtils.getIdentifierEntradaTabela().tipo.equals(TipoAl.INTEIRO)){
+                if(SemanticoUtils.getIdentifierEntradaTabela().tipo == TipoAl.REAL && ctx.NUM_INT().getText().equals("0")){
                     return null;
                 }
-                if(identComp.tipo == TipoAl.REAL && ctx.NUM_INT().getText().equals("0")){
-                    return null;
-                }
-                SemanticoUtils.adicionaErroSemantico(identCompToken, ErrosSemanticos.ATRIBUICAO_INCOMPATIVEL);
+                SemanticoUtils.adicionaErroSemantico(SemanticoUtils.getIdentifierEntradaTabela(), SemanticoUtils.getIdentifier().getStart().getLine(), ErrosSemanticos.ATRIBUICAO_INCOMPATIVEL);
             }
         }
         else if(ctx.NUM_REAL() != null){
-            if (identComp != null && !identComp.tipo.equals(TipoAl.REAL)){
-                SemanticoUtils.adicionaErroSemantico(identCompToken, ErrosSemanticos.ATRIBUICAO_INCOMPATIVEL);
+            if (SemanticoUtils.getIdentifierEntradaTabela() != null && !SemanticoUtils.getIdentifierEntradaTabela().tipo.equals(TipoAl.REAL)){
+                SemanticoUtils.adicionaErroSemantico(SemanticoUtils.getIdentifierEntradaTabela(), SemanticoUtils.getIdentifier().getStart().getLine(), ErrosSemanticos.ATRIBUICAO_INCOMPATIVEL);
+            }
+        }
+        else if(ctx.expression() != null){
+            ctx.expression().forEach(it -> visitExpression(it));
+        }
+
+        return null;
+    }
+
+    @Override
+    public Void visitNon_unary_portion(AlParser.Non_unary_portionContext ctx) {
+
+        var test = ctx.getText();
+
+        if (ctx.OP_E_COMERCIAL() != null){
+            var nome = ctx.getText().replace("&", "");
+            var identEntradaTabelaDeSimbolos = escopos.obterEscopoAtual().verificar(nome);
+            if (SemanticoUtils.getIdentifierEntradaTabela().tipo != identEntradaTabelaDeSimbolos.tipo){
+                SemanticoUtils.adicionaErroSemantico(SemanticoUtils.getIdentifierEntradaTabela(), SemanticoUtils.getIdentifier().getStart().getLine(), ErrosSemanticos.ATRIBUICAO_INCOMPATIVEL);
+            }
+        }
+        else if(ctx.CADEIA() != null){
+            if (SemanticoUtils.getIdentifierEntradaTabela() != null && SemanticoUtils.getIdentifierEntradaTabela().tipo != TipoAl.CADEIA){
+                if (SemanticoUtils.getIdentifier().getText().contains("["))
+                    SemanticoUtils.adicionaErroSemantico(SemanticoUtils.getIdentifier().getText(), SemanticoUtils.getIdentifier().getStart().getLine(), ErrosSemanticos.ATRIBUICAO_INCOMPATIVEL);
+                else
+                    SemanticoUtils.adicionaErroSemantico(SemanticoUtils.getIdentifierEntradaTabela(), SemanticoUtils.getIdentifier().getStart().getLine(), ErrosSemanticos.ATRIBUICAO_INCOMPATIVEL);
             }
         }
 
@@ -176,20 +278,28 @@ public class SemanticoVisitor extends AlBaseVisitor<Void> {
 
         var nome = ctx.identifier().getText();
         var ident = escopos.obterEscopoAtual().verificar(nome);
-        identComp = ident;
-        identCompToken = ctx.identifier().getStart();
-        visitExpression(ctx.expression());
-        identComp = null;
-        identCompToken = null;
+
+        if(ident != null){
+            SemanticoUtils.setValidacaoAtribuicao(ctx.identifier(), ident, ctx.expression());
+            visitExpression(ctx.expression());
+            SemanticoUtils.setValidacaoAtribuicao(null, null, null);
+        }
+        else {
+            SemanticoUtils.adicionaErroSemantico(nome, ctx.identifier().getStart().getLine(), ErrosSemanticos.IDENTIFICADOR_INEXISTENTE);
+        }
         return null;
     }
 
     @Override
     public Void visitExpression(AlParser.ExpressionContext ctx) {
+        var test = ctx.getText();
         var identifierLeft = ctx.getParent().getText().split("<-")[0];
         var identLeft = escopos.obterEscopoAtual().verificar(identifierLeft);
 
-        ctx.logical_term().forEach(it -> visitLogical_term(it));
+        ctx.logical_term().forEach(it -> {
+            expressaoComparacao.add(it.getStart());
+            visitLogical_term(it);
+        });
 
         return null;
     }
@@ -217,8 +327,8 @@ public class SemanticoVisitor extends AlBaseVisitor<Void> {
             visitRelational_exp(ctx.relational_exp());
         }
         else if(ctx.VERDADEIRO() != null || ctx.FALSO() != null){
-            if (identComp != null && identComp.tipo != TipoAl.LOGICO){
-                SemanticoUtils.adicionaErroSemantico(identCompToken, ErrosSemanticos.ATRIBUICAO_INCOMPATIVEL);
+            if (SemanticoUtils.getIdentifier() != null && SemanticoUtils.getIdentifierEntradaTabela().tipo != TipoAl.LOGICO){
+                SemanticoUtils.adicionaErroSemantico(SemanticoUtils.getIdentifierEntradaTabela(), SemanticoUtils.getIdentifier().getStart().getLine(), ErrosSemanticos.ATRIBUICAO_INCOMPATIVEL);
             }
         }
 

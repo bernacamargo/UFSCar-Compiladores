@@ -153,7 +153,7 @@ interval_number: single_operator? NUM_INT (PONTOS single_operator? NUM_INT)?;
 
 single_operator: OP_MENOS;
 
-arithmetic_exp: ABRE_PARENTESE? term (op1 term)* FECHA_PARENTESE?;
+arithmetic_exp: term (op1 term)*;
 
 term: factor (op2 factor)*;
 
@@ -166,7 +166,7 @@ op2: OP_MUL | OP_DIV;
 op3: OP_PORCENTAGEM;
 non_unary_portion: OP_E_COMERCIAL identifier | CADEIA;
 
-relational_exp: arithmetic_exp (relational_op arithmetic_exp)?;
+relational_exp: ABRE_PARENTESE? arithmetic_exp (relational_op arithmetic_exp)? FECHA_PARENTESE?;
 
 relational_op: OP_IGUAL | OP_DIFERENTE | OP_MAIOR_IGUAL | OP_MENOR_IGUAL | OP_MAIOR | OP_MENOR;
 

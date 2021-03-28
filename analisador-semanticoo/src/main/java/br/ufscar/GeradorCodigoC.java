@@ -129,10 +129,10 @@ public class GeradorCodigoC extends AlBaseVisitor<Void>{
     @Override
     public Void visitType(AlParser.TypeContext ctx) {
 
-        if (ctx.extend_type() != null){
+        if (ctx.extend_type() != null) {
             saida.append(ctx.extend_type().getText());
         }
-        else if(ctx.register() != null){
+        else if(ctx.register() != null) {
             visitRegister(ctx.register());
         }
 
@@ -358,11 +358,18 @@ public class GeradorCodigoC extends AlBaseVisitor<Void>{
     public Void visitRelational_exp(AlParser.Relational_expContext ctx) {
         var test = ctx.getText();
 
+        if (ctx.ABRE_PARENTESE() != null){
+            saida.append("(");
+        }
+
         visitArithmetic_exp(ctx.arithmetic_exp(0));
         if (ctx.relational_op() != null) {
             visitRelational_op(ctx.relational_op());
             visitArithmetic_exp(ctx.arithmetic_exp(1));
         }
+
+        if (ctx.FECHA_PARENTESE() != null)
+            saida.append(")");
 
         return null;
     }
@@ -385,7 +392,7 @@ public class GeradorCodigoC extends AlBaseVisitor<Void>{
     @Override
     public Void visitArithmetic_exp(AlParser.Arithmetic_expContext ctx) {
         var test = ctx.getText();
-        if(ctx.ABRE_PARENTESE() != null){
+        if(ctx.getText().contains("(")){
             saida.append("(");
         }
         for(int i=0; i < ctx.term().size(); i++){
@@ -394,7 +401,7 @@ public class GeradorCodigoC extends AlBaseVisitor<Void>{
                 saida.append(" " + ctx.op1(0).getText() + " ");
             }
         }
-        if(ctx.FECHA_PARENTESE() != null){
+        if(ctx.getText().contains(")")){
             saida.append(")");
         }
 

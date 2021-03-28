@@ -31,22 +31,32 @@ public class Main {
 
             CommonTokenStream tokens = new CommonTokenStream(lex); //gerador do token
             AlParser parser = new AlParser(tokens);
+
+            CustomErrorListener customErrorListener = new CustomErrorListener(args[1], lex); //para apontar o erro na saida
+            parser.addErrorListener(customErrorListener);
             AlParser.ProgrContext arvore = parser.progr();
 
-            // Analisador Semantico
-            SemanticoVisitor semanticoVisitor = new SemanticoVisitor();
-            semanticoVisitor.visitProgr(arvore);
-            try(PrintWriter pw = new PrintWriter(args[1])){
-                pw.print(SemanticoUtils.getErrosSemanticos());
+            if (CharStreams.fromFileName(args[1]).size() == 0){
+                // Analisador Semantico
+                SemanticoVisitor semanticoVisitor = new SemanticoVisitor();
+                semanticoVisitor.visitProgr(arvore);
+
+                if (SemanticoUtils.getErrosSemanticos().isEmpty()){
+                    // Gerador de código
+                    GeradorCodigoC gerador = new GeradorCodigoC();
+                    gerador.visitProgr(arvore);
+                    try(PrintWriter pw = new PrintWriter(args[1])){
+                        pw.print(gerador.saida.toString());
+                    }
+                }
+                else {
+                    try(PrintWriter pw = new PrintWriter(args[1])){
+                        pw.print(SemanticoUtils.getErrosSemanticos());
+                    }
+                }
             }
 
-//            SemanticoUtils.exibeErrosSemanticos();
-            // Gerador de código
-//            GeradorCodigoC gerador = new GeradorCodigoC();
-//            gerador.visitProgr(arvore);
-//            try(PrintWriter pw = new PrintWriter(args[1])){
-//                pw.print(gerador.saida.toString());
-//            }
+
         }
         catch (IOException ex) {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
