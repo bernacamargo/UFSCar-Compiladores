@@ -77,7 +77,7 @@ public class SemanticoVisitor extends AlBaseVisitor<Void> {
 
         return null;
     }
-
+// verifica as variaveis, define os tipos e salva,  para ser utilizada depois em outro validações (ex:como comando de atribuição) 
     @Override
     public Void visitVariable(AlParser.VariableContext ctx) {
 
@@ -105,6 +105,7 @@ public class SemanticoVisitor extends AlBaseVisitor<Void> {
                 }
             }
         }
+        // verifica se é um registo de estrutura (ex. estudante.ra) para registrar e verificar no restante do código se é utilizado de maneira correta
         else if(ctx.type().register() != null){
 
             ctx.identifier().forEach(identfier -> {
@@ -138,15 +139,7 @@ public class SemanticoVisitor extends AlBaseVisitor<Void> {
 
         return null;
     }
-
-
-    @Override
-    public Void visitRegister(AlParser.RegisterContext ctx) {
-
-
-        return null;
-    }
-
+// verifica se é uma leitura de variavel 
     @Override
     public Void visitCmd_read(AlParser.Cmd_readContext ctx) {
 
@@ -159,7 +152,7 @@ public class SemanticoVisitor extends AlBaseVisitor<Void> {
 
         return null;
     }
-
+// verifica se é uma escrita de variavel 
     @Override
     public Void visitCmd_write(AlParser.Cmd_writeContext ctx) {
 
@@ -167,15 +160,15 @@ public class SemanticoVisitor extends AlBaseVisitor<Void> {
 
         return null;
     }
-
+// visita os termos que possui numa operação aritmetica
     @Override
     public Void visitArithmetic_exp(AlParser.Arithmetic_expContext ctx) {
         var test = ctx.getText();
-        ctx.term().forEach(it -> visitTerm(it));
+        ctx.term().forEach(it -> visitTerm(it)); // chama a função para verificar o tipo do termo
 
         return null;
     }
-
+//visita o termo para encontrar o tipo e operador 
     @Override
     public Void visitTerm(AlParser.TermContext ctx) {
 
@@ -199,7 +192,7 @@ public class SemanticoVisitor extends AlBaseVisitor<Void> {
 
         return null;
     }
-
+// retorna o tipo como num_real e num_int 
     @Override
     public Void visitParcel(AlParser.ParcelContext ctx) {
         var test = ctx.getText();
@@ -212,7 +205,7 @@ public class SemanticoVisitor extends AlBaseVisitor<Void> {
 
         return null;
     }
-
+ // identifica valores operacionais realizados entre os termos
     @Override
     public Void visitSingle_parcel(AlParser.Single_parcelContext ctx) {
 
@@ -272,7 +265,7 @@ public class SemanticoVisitor extends AlBaseVisitor<Void> {
 
         return null;
     }
-
+// identifica atribuição de valor em uma variável e chama a função visitExpression
     @Override
     public Void visitCmd_assignment(AlParser.Cmd_assignmentContext ctx) {
 
@@ -289,7 +282,7 @@ public class SemanticoVisitor extends AlBaseVisitor<Void> {
         }
         return null;
     }
-
+// identifica o valor que será atribuido para uma variável 
     @Override
     public Void visitExpression(AlParser.ExpressionContext ctx) {
         var test = ctx.getText();
@@ -303,7 +296,7 @@ public class SemanticoVisitor extends AlBaseVisitor<Void> {
 
         return null;
     }
-
+// identifica os termos lógicos que estão na expressão
     @Override
     public Void visitLogical_term(AlParser.Logical_termContext ctx) {
 
@@ -311,7 +304,7 @@ public class SemanticoVisitor extends AlBaseVisitor<Void> {
 
         return null;
     }
-
+// identifica os termos factor que estão nos termos
     @Override
     public Void visitLogical_factor(AlParser.Logical_factorContext ctx) {
 
@@ -319,7 +312,7 @@ public class SemanticoVisitor extends AlBaseVisitor<Void> {
 
         return null;
     }
-
+// identifica valores boolean true e falso
     @Override
     public Void visitLogical_plot(AlParser.Logical_plotContext ctx) {
 
@@ -334,7 +327,7 @@ public class SemanticoVisitor extends AlBaseVisitor<Void> {
 
         return null;
     }
-
+// identifica os operadores de comparações entre termos
     @Override
     public Void visitRelational_exp(AlParser.Relational_expContext ctx) {
 
