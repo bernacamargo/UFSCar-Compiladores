@@ -36,15 +36,18 @@ public class Main {
             parser.addErrorListener(customErrorListener);
             AlParser.ProgrContext arvore = parser.progr();
 
+            // Verifica se o analisador sintatico escreveu algum erro no arquivo de saída
             if (CharStreams.fromFileName(args[1]).size() == 0){
                 // Analisador Semantico
                 SemanticoVisitor semanticoVisitor = new SemanticoVisitor();
                 semanticoVisitor.visitProgr(arvore);
 
+                // Caso não tenha encontrado erros no analisador semantico, inicia o gerador de código
                 if (SemanticoUtils.getErrosSemanticos().isEmpty()){
                     // Gerador de código
                     GeradorCodigoC gerador = new GeradorCodigoC();
                     gerador.visitProgr(arvore);
+                    // Escreve no arquivo de saída o código em C gerado a partir do algoritmo de entrada
                     try(PrintWriter pw = new PrintWriter(args[1])){
                         pw.print(gerador.saida.toString());
                     }

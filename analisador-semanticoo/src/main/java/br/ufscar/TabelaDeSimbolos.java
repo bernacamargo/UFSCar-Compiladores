@@ -19,6 +19,7 @@ public class TabelaDeSimbolos {
         return verificar(nome) != null;
     }
 
+    // Retorna um valor da tabela de simbolos baseado na key
     public EntradaTabelaDeSimbolos verificar(String nome) {
 
         EntradaTabelaDeSimbolos retorno = null;
@@ -41,6 +42,8 @@ public class TabelaDeSimbolos {
         return retorno;
     }
 
+    // Verifica na tabela de simolos por tipos customizados (typedef)
+    // e insere a variavel com a tipagem correta
     public void verificarTipoCustomizados(String nome, String tipoVar) {
 
         HashMap<String, EntradaTabelaDeSimbolos> tabelaDeSimbolosAuxiliar = new HashMap<>();
@@ -58,6 +61,7 @@ public class TabelaDeSimbolos {
     }
 
 
+    // Imprime a tabela (utilizado para debug)
     @Override
     public String toString() {
         StringBuilder tabela = new StringBuilder();
